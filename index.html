@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <!-- Load TensorFlow.js -->
+    <script src="https://unpkg.com/@tensorflow/tfjs"></script>
+    <!-- Load Posenet -->
+    <script src="https://unpkg.com/@tensorflow-models/posenet"></script>
+    <video autoplay playsinline muted id="webcam" width="640" height="480"></video>
+    <canvas id="canvas" width="640" height="480"></canvas>
+    <script type="text/javascript">
+        async function setupCamera() {
+            const video = document.getElementById('webcam');
+            const stream = await navigator.mediaDevices.getUserMedia({ 'video': true, 'audio': false });
+            video.srcObject = stream;
+
+            return new Promise((resolve) => {
+                video.onloadedmetadata = () => {
+                    resolve(video);
+                };
+            });
+        }
+
+        async function loadVideo() {
+            const video = await setupCamera();
+            video.play();
+            return video;
+        }
+
+        async function main() {
+            const net = await posenet.load();
+            let video;
+
+            try {
+                video = await loadVideo();
+            } catch (e) {
+                console.error(e);
+                return;
+            }
+
+            detectPoseInRealTime(video, net);
+        }
+
+        async function detectPoseInRealTime(video, net) {
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const flipPoseHorizontal = true;
+
+    async function poseDetectionFrame() {
+        // Change from estimateSinglePose to estimateMultiplePoses
+        const poses = await net.estimateMultiplePoses(video, {
+            flipHorizontal: flipPoseHorizontal,
+            maxDetections: 1, // Limit to 1 detection
+            scoreThreshold: 0.6 // Confidence threshold
+        });
+
+        ctx.clearRect(0, 0, video.width, video.height);
+
+        ctx.save();
+        ctx.scale(-1, 1);
+        ctx.translate(-video.width, 0);
+        ctx.drawImage(video, 0, 0, video.width, video.height);
+        ctx.restore();
+
+        // Only draw the first pose
+        if (poses.length > 0) {
+            const pose = poses[0];
+
+            // Draw the keypoints and skeleton on the image.
+            drawKeypoints(pose.keypoints, 0.1, ctx);
+            drawSkeleton(pose.keypoints, 0.1, ctx);
+        }
+
+        requestAnimationFrame(poseDetectionFrame);
+    }
+
+    poseDetectionFrame();
+}
+
+        function drawKeypoints(keypoints, minConfidence, ctx, scale = 1) {
+            for (let i = 0; i < keypoints.length; i++) {
+                const keypoint = keypoints[i];
+
+                if (keypoint.score < minConfidence) {
+                    continue;
+                }
+
+                const { y, x } = keypoint.position;
+                ctx.beginPath();
+                ctx.arc(x * scale, y * scale, 3, 0, 2 * Math.PI);
+                ctx.fillStyle = 'aqua';
+                ctx.fill();
+            }
+        }
+
+        function drawSkeleton(keypoints, minConfidence = 0.9, ctx, scale = 1) {
+            const adjacentKeyPoints = posenet.getAdjacentKeyPoints(keypoints, minConfidence);
+
+            adjacentKeyPoints.forEach((keypoints) => {
+                drawSegment(
+                    toTuple(keypoints[0].position), toTuple(keypoints[1].position), ctx);
+            });
+        }
+
+        function toTuple({ y, x }) {
+            return [y, x];
+        }
+
+        function drawSegment([ay, ax], [by, bx], ctx) {
+            ctx.beginPath();
+            ctx.moveTo(ax, ay);
+            ctx.lineTo(bx, by);
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = 'aqua';
+            ctx.stroke();
+        }
+
+        main();
+    </script>
+</body>
+
+</html>
