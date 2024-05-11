@@ -20,3 +20,6 @@ Koach is a mobile application that uses advanced pose recognition technology to 
 
 We intended to use tensorflow,opencv and mediapipe to detect the body Movements i.e, Pose Estimation and compare that to and professional player doing the same and give output to user suggesting him to improve where he/she lacks
 
+
+![how-it-work-Koach](https://github.com/vatsalyashukla39/zvezda_hf24/assets/107036303/651bae95-3f40-45e0-a49e-19330a935067)
+
