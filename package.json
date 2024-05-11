@@ -1,0 +1,15 @@
+{
+  "name": "zvezda_hf24",
+  "version": "1.0.0",
+  "description": "main git repo for Team Zvezda, attending hackfest 24",
+  "main": "script.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
