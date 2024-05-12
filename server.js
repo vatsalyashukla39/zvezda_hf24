@@ -1,15 +1,36 @@
 const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 const path = require('path');
+
 const app = express();
-const port = 3000;
+app.use(bodyParser.json()); // for parsing application/json
+app.use(express.static(path.join(__dirname, 'public'))); // serve static files from 'public' directory
 
-// Serve static files from the "public" directory
-app.use(express.static(path.join(__dirname, 'public')));
+// Connect to MongoDB
+mongoose.connect('mongodb+srv://notaaash:january@koach.vryq9e9.mongodb.net/', { useUnifiedTopology: true });
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/index.html'));
+// Define a Mongoose schema for the coordinates
+const coordinateSchema = new mongoose.Schema({}, { strict: false });
+
+// Create a Mongoose model from the schema
+const Coordinate = mongoose.model('Coordinate', coordinateSchema);
+
+app.post('/json-data', (req, res) => {
+  const coordinates = new Coordinate(req.body);
+
+  coordinates.save((err, result) => {
+    if (err) {
+      console.error('Error inserting data into MongoDB', err);
+      res.status(500).send('Error inserting data into MongoDB');
+      return;
+    }
+
+    console.log("Coordinates inserted");
+    res.send('Coordinates received and inserted');
+  });
 });
 
-app.listen(port, () => {
-  console.log(`App listening at http://localhost:${port}`)
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
 });

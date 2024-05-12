@@ -42,40 +42,40 @@
         }
 
         async function detectPoseInRealTime(video, net) {
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-    const flipPoseHorizontal = true;
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            const flipPoseHorizontal = true;
 
-    async function poseDetectionFrame() {
-        // Change from estimateSinglePose to estimateMultiplePoses
-        const poses = await net.estimateMultiplePoses(video, {
-            flipHorizontal: flipPoseHorizontal,
-            maxDetections: 1, // Limit to 1 detection
-            scoreThreshold: 0.6 // Confidence threshold
-        });
+            async function poseDetectionFrame() {
+                // Change from estimateSinglePose to estimateMultiplePoses
+                const poses = await net.estimateMultiplePoses(video, {
+                    flipHorizontal: flipPoseHorizontal,
+                    maxDetections: 1, // Limit to 1 detection
+                    scoreThreshold: 0.6 // Confidence threshold
+                });
 
-        ctx.clearRect(0, 0, video.width, video.height);
+                ctx.clearRect(0, 0, video.width, video.height);
 
-        ctx.save();
-        ctx.scale(-1, 1);
-        ctx.translate(-video.width, 0);
-        ctx.drawImage(video, 0, 0, video.width, video.height);
-        ctx.restore();
+                ctx.save();
+                ctx.scale(-1, 1);
+                ctx.translate(-video.width, 0);
+                ctx.drawImage(video, 0, 0, video.width, video.height);
+                ctx.restore();
 
-        // Only draw the first pose
-        if (poses.length > 0) {
-            const pose = poses[0];
+                // Only draw the first pose
+                if (poses.length > 0) {
+                    const pose = poses[0];
 
-            // Draw the keypoints and skeleton on the image.
-            drawKeypoints(pose.keypoints, 0.1, ctx);
-            drawSkeleton(pose.keypoints, 0.1, ctx);
+                    // Draw the keypoints and skeleton on the image.
+                    drawKeypoints(pose.keypoints, 0.1, ctx);
+                    drawSkeleton(pose.keypoints, 0.1, ctx);
+                }
+
+                requestAnimationFrame(poseDetectionFrame);
+            }
+
+            poseDetectionFrame();
         }
-
-        requestAnimationFrame(poseDetectionFrame);
-    }
-
-    poseDetectionFrame();
-}
 
         function drawKeypoints(keypoints, minConfidence, ctx, scale = 1) {
             for (let i = 0; i < keypoints.length; i++) {
@@ -114,6 +114,56 @@
             ctx.strokeStyle = 'aqua';
             ctx.stroke();
         }
+        function logKeypoints(keypoints) {
+                const coordinates = keypoints.map(keypoint => ({
+                    part: keypoint.part,
+                    position: [keypoint.position.x, keypoint.position.y]
+                }));
+
+                fetch('/json-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(coordinates),
+                });
+            }
+
+            function drawSkeleton(keypoints, minConfidence = 0.9, ctx, scale = 1) {
+                    const adjacentKeyPoints = posenet.getAdjacentKeyPoints(keypoints, minConfidence);
+
+                    let coordinates = [];
+
+                    adjacentKeyPoints.forEach((keypoints) => {
+                        drawSegment(
+                            toTuple(keypoints[0].position), toTuple(keypoints[1].position), ctx);
+
+                        coordinates.push({
+                            joint1: toTuple(keypoints[0].position),
+                            joint2: toTuple(keypoints[1].position)
+                        });
+                    });
+
+                    // Send the coordinates to the server
+                    sendCoordinates(coordinates);
+                    logKeypoints(keypoints)
+                }
+
+                function sendCoordinates(coordinates) {
+                        setTimeout(() => {
+                            fetch('http://localhost:3000/json-data', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify(coordinates),
+                            })
+                                .then(response => response.json())
+                                .then(data => console.log('Success:', data))
+                                .catch((error) => console.error('Error:', error));
+                        }, 500);
+                    }
+
 
         main();
     </script>
