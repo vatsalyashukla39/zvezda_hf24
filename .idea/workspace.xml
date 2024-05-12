@@ -4,39 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="08e53070-9652-4846-81bd-a3e40060a3e2" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/pythonProject3.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3.tflite" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/average_straight_keypoints.npy" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/notstraight_1.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/straight_1.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/straight_10.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/straight_11.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/straight_12.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/straight_13.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/straight_14.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/straight_15.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/straight_16.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/straight_17.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/straight_2.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/straight_3.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/straight_4.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/straight_5.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/straight_6.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/straight_7.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/straight_8.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/straight_9.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/eval.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/model.joblib" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/testingmovenet.py" afterDir="false" />
-    </list>
+    <list default="true" id="08e53070-9652-4846-81bd-a3e40060a3e2" name="Changes" comment="init" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -90,9 +58,20 @@
       <option name="presentableId" value="Default" />
       <updated>1715457164982</updated>
     </task>
+    <task id="LOCAL-00001" summary="init">
+      <option name="closed" value="true" />
+      <created>1715474817341</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1715474817341</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="init" />
+    <option name="LAST_COMMIT_MESSAGE" value="init" />
   </component>
 </project>
