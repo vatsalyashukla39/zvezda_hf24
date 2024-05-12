@@ -3,9 +3,10 @@ import cv2
 from joblib import load
 from scipy import stats
 import os
+import matplotlib.pyplot as plt
 
 
-from main import extract_pose_data
+from main import extract_pose_data, average_cover_keypoints
 
 # Load the model from the file
 model = load('model.joblib')
@@ -18,7 +19,7 @@ model = load('model.joblib')
 # Define a function to process the user input video and extract pose data
 def process_user_video(video_path):
     # Replace this with the actual number of frames you want to extract from the video
-    desired_frames = 52
+    desired_frames = 30
 
     # Extract pose data from the video
     pose_data = extract_pose_data(video_path, desired_frames, label=None)
@@ -27,6 +28,14 @@ def process_user_video(video_path):
     pose_data = np.array([data[0] for data in pose_data])
 
     return pose_data
+
+def plot_keypoints(keypoints, color):
+    # Extract the x and y coordinates
+    x = [keypoint[0] for keypoint in keypoints]
+    y = [keypoint[1] for keypoint in keypoints]
+
+    # Create a scatter plot of the keypoints
+    plt.scatter(x, y, color=color)
 
 keypoints_mapping = {
     0: 'nose',
@@ -74,7 +83,7 @@ def play_video(video_path):
 
 
 # Process the user input video
-video_path = 'data/notstraight_1.mp4'
+video_path = 'testing/coverDrive_4.mp4'
 pose_data = process_user_video(video_path)
 
 # Load the average keypoints for the "straight" videos
@@ -123,6 +132,11 @@ most_different_joint = keypoints_mapping[most_different_keypoint_index]
 second_most_different_joint = keypoints_mapping[second_most_different_keypoint_index]
 third_most_different_joint = keypoints_mapping[third_most_different_keypoint_index]
 
+# Plot the user's keypoints in red
+plot_keypoints(pose_data, 'red')
+
+# Plot the average "straight" keypoints in blue
+plot_keypoints(average_straight_keypoints, 'blue')
 
 
 # # Map the index back to the corresponding keypoint
@@ -134,6 +148,11 @@ third_most_different_joint = keypoints_mapping[third_most_different_keypoint_ind
 
 # Print the index of the most different keypoint
 # print(f'The joint that need the  most improvement is joint {improv}.')
+
+# # Show the plot
+# plt.show()
+
+print(overall_predicted_label)
 
 # Play the video if the overall predicted label is 'notstraight'
 if overall_predicted_label == 'notstraight':
@@ -147,3 +166,21 @@ if overall_predicted_label == 'notstraight':
     print(f'The joint that needs the most improvement is: {most_different_joint}')
     print(f'The joint that needs the second most improvement is: {second_most_different_joint}')
     print(f'The joint that needs the third most improvement is: {third_most_different_joint}')
+
+if overall_predicted_label == 'coverDrive':
+    print("The shot you played is closest to a cover drive. \n If you are working to improve it\nPlease work on the following points:")
+    # Load the average keypoints for the "straight" videos
+    average_cover_keypoints = np.load('average_cover_keypoints.npy')
+    # Calculate the difference between the user's keypoints and the average "coverDrive" keypoints
+    keypoint_differences = np.abs(pose_data - average_straight_keypoints)
+    # Find the indices that would sort the keypoint differences
+    sorted_keypoint_indices = np.argsort(keypoint_differences.flatten())
+    # Get the indices of the keypoints with the largest, second largest, and third-largest differences
+    most_different_keypoint_index = sorted_keypoint_indices[-1] % 68 // 4
+    second_most_different_keypoint_index = sorted_keypoint_indices[-2] % 68 // 4
+    third_most_different_keypoint_index = sorted_keypoint_indices[-3] % 68 // 4
+    # Get the names of the joints that correspond to these keypoints
+    most_different_joint = keypoints_mapping[most_different_keypoint_index]
+    second_most_different_joint = keypoints_mapping[second_most_different_keypoint_index]
+    third_most_different_joint = keypoints_mapping[third_most_different_keypoint_index]
+

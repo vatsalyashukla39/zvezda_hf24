@@ -27,6 +27,9 @@ def process_frame(image):
 
 def get_pose_data(image):
     results = mp_pose.process(image)
+    if results.pose_landmarks is None:
+        print("No pose landmarks detected in the image.")
+        return [0]*132  # Return a list of zeros of the appropriate length
     keypoints = results.pose_landmarks.landmark
     keypoints_list = [[landmark.x, landmark.y, landmark.z, landmark.visibility] for landmark in keypoints]
 
@@ -107,13 +110,16 @@ def extract_all_videos(video_dir, desired_frames):
     return all_pose_data
 
 # Calculate the average keypoints for the "straight" videos
-average_straight_keypoints = calculate_average_keypoints('data', 52, 'straight')
+average_straight_keypoints = calculate_average_keypoints('data', 30, 'straightDrive')
+average_cover_keypoints = calculate_average_keypoints('data', 30, 'coverDrive')
 
 # Save the average keypoints to a file
 np.save('average_straight_keypoints.npy', average_straight_keypoints)
 
+np.save('average_cover_keypoints.npy', average_cover_keypoints)
+
 # Collect all pose data
-all_pose_data = extract_all_videos('data', 52)
+all_pose_data = extract_all_videos('data', 30)
 
 # Split data into features and labels
 X = [data[0] for data in all_pose_data]  # features
